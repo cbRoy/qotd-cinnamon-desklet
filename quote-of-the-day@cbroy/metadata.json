@@ -1,0 +1,7 @@
+{
+  "uuid": "quote-of-the-day@cbroy",
+  "name": "Quote of the Day",
+  "description": "Displays quotes from xxx.com",
+  "prevent-decorations": true
+
+}

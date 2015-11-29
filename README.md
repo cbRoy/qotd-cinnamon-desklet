@@ -1,0 +1,1 @@
+# qotd-cinnamon-desklet
