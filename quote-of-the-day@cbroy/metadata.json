@@ -1,7 +1,7 @@
 {
-  "uuid": "quote-of-the-day@cbroy",
-  "name": "Quote of the Day",
-  "description": "Displays quotes from xxxz.com",
-  "prevent-decorations": true
-
+    "dangerous": false, 
+    "description": "Displays quotes from xxxz.com", 
+    "prevent-decorations": true, 
+    "uuid": "quote-of-the-day@cbroy", 
+    "name": "Quote of the Day"
 }

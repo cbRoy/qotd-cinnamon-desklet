@@ -31,33 +31,49 @@ QotDDesklet.prototype = {
     this.current_Quote = null;
     this._uuid = this.metadata["uuid"]
     this._instanceId = desklet_id;
-    this._initUI();
     this._initSettings();
     this._initDriver(); //calls _update_loop()
+    this._initUI();
   },
 
   _initUI: function(){
     this.window = new St.Bin({style: "width: 500px;text-align: center"});
-    this.quote = new St.Label({style: "color:white;"});
+    this.quote = new St.Label();
     this.quote.set_text("Loading...");
     this.quote.clutter_text.ellipsize = Pango.EllipsizeMode.NONE;
     this.quote.clutter_text.line_wrap = true;
     this.window.add_actor(this.quote);
     this.setContent(this.window);
-    global.log('here');
   },
 
   _initSettings: function(){
       try{
-        this.settings = new Settings.DeskletSettings(this, this._uuid, this._instanceId);
+        this.settings = new Settings.DeskletSettings(this, UUID, this._instanceId);
+        
         this.settings.bindProperty(Settings.BindingDirection.IN, "update-time", "_delay", this._update_loop, null);
         this.settings.bindProperty(Settings.BindingDirection.IN, "service", "service", this._initDriver, null);
+        
+        this.settings.bindProperty(Settings.BindingDirection.ONE_WAY, "font-size", "font_size", this._updateFont, null);
+        this.settings.bindProperty(Settings.BindingDirection.ONE_WAY, "font-family", "font_family", this._updateFont, null);
+        this.settings.bindProperty(Settings.BindingDirection.ONE_WAY, "font-color", "font_color", this._updateFont, null);
+        
+        // refresh style on change of global desklet setting for decorations
+        // applies saved style settings before the window is drawn
+		global.settings.connect('changed::desklet-decorations', Lang.bind(this, this._updateFont));
+      
       }catch(e){
         Main.notifyError(e.message);
         global.log(e);
       }
   },
-
+  _updateFont: function(){
+	  var tempStyle =  "font-size:" + this.font_size+"px;";
+		tempStyle   += "font-family:" + this.font_family + ';';
+		tempStyle 	+= "color:" + this.font_color;
+		
+		this.quote.style = tempStyle;
+  },
+  
   _initDriver: function(){
     if(this.driver) delete this.driver;
     switch(this.service){
