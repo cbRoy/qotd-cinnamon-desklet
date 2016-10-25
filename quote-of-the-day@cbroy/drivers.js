@@ -11,6 +11,7 @@ qDriver.prototype = {
   driverType: "Base",
   linkURL: '',
   linkText: '',
+  quoteUrl: '',
   apiKey: '',
 
   _init: function(apiKey){
@@ -119,6 +120,55 @@ qDriverChuckNorris.prototype = {
   _process_quote: function(data, callback){
     let joke = JSON.parse(data);
     this.data.quote = joke['value']['joke'];
+    callback.call();
+  }
+}
+/*////////////////////////////////
+/// Creating a new Quote Drive ///
+//////////////////////////////////
+
+Use the folling base model to define everything needed
+
+1. Add new option in settings-schema.json under "service"
+2. Add new case   in main.js _initDriver
+
+function qDriverBASEMODEL(){
+  this._init();
+}
+
+qDriverBASEMODEL.prototype = {
+  __proto__: qDriver.prototype,
+
+  driverType: 'DIVERNAME',
+  linkUrl: '',
+  linkText: 'DRIVER NAME',
+  quoteUrl: 'DRIVER URL',
+
+  _process_quote: function(data, callback){
+    let quote = JSON.parse(data);
+    this.data.quote  = quote['field for quote'];
+    this.data.author = quote['field for author'];
+    callback.call();
+  }
+}
+*/
+
+function qDriverStormConsul(){
+  this._init();
+}
+
+qDriverStormConsul.prototype = {
+  __proto__: qDriver.prototype,
+
+  driverType: 'StormConsultancy',
+  linkUrl: '',
+  linkText: 'Programming Quotes from StormConsultancy',
+  quoteUrl: 'http://quotes.stormconsultancy.co.uk/random.json',
+
+  _process_quote: function(data, callback){
+    let quote = JSON.parse(data);
+    this.data.quote  = quote['quote'];
+    this.data.author = quote['author'];
     callback.call();
   }
 }

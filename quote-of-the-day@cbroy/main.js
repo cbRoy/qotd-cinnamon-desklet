@@ -89,6 +89,9 @@ QotDDesklet.prototype = {
       case "icndb":
         this.driver = new Drivers.qDriverChuckNorris();
         break;
+      case "stormconsultancy":
+        this.driver = new Drivers.qDriverStormConsul();
+        break;
       default:
         this.driver = new Drivers.qDriverForismatic();
     }
