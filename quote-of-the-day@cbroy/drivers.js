@@ -1,14 +1,16 @@
+/* global imports:true */
 const Soup = imports.gi.Soup;
 
 const _httpSession = new Soup.SessionAsync();
-Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
+Soup.Session.prototype.add_feature.call(_httpSession,
+  new Soup.ProxyResolverDefault());
 
 
-function qDriver(){
+function Driver() {
   this._init();
 }
 
-qDriver.prototype = {
+Driver.prototype = {
   driverName: '',
   driverURL: '',
   driverText: '',
@@ -16,18 +18,18 @@ qDriver.prototype = {
   quoteProp: '',
   authorProp: '',
 
-  _init: function(){
-    this.Quote = new Object();
+  _init: function() {
+    this.Quote = {};
     this.Quote.raw = '';
     this.Quote.parsed = '';
     this.Quote.quote = '';
     this.Quote.author = '';
   },
 
-  getNestedValue: function(o, p, defval){
+  getNestedValue: function(o, p, defval) {
       if (typeof defval == 'undefined') defval = null;
       p = p.split('.');
-      for (var i = 0; i < p.length; i++) {
+      for (let i = 0; i < p.length; i++) {
           if(typeof o[p[i]] == 'undefined')
               return defval;
           o = o[p[i]];
@@ -35,39 +37,44 @@ qDriver.prototype = {
       return o;
   },
 
-  _getQuote: function(url, callback){
+  _getQuote: function(url, callback) {
     let here = this;
-    let request = Soup.Message.new('GET',url);
-    _httpSession.queue_message(request, function(session, message){
-      if(message.status_code === 200){
+    let request = Soup.Message.new('GET', url);
+    _httpSession.queue_message(request, function(session, message) {
+      if(message.status_code === 200) {
         try{
           callback.call(here, message.response_body.data);
-        }catch(e){ global.logError(e) }
+        }catch(e) {
+          global.logError(e);
+        }
       }else{
-        global.logWarning("Error retrieving address " + url + ". Status: " + message.status_code + ": " + message.reason_phrase);
+        global.logWarning('Error retrieving address ' + url + '. Status: ' +
+          message.status_code + ': ' + message.reason_phrase );
         callback.call(here, false);
       }
     });
   },
-  refreshQuote: function(callback){
+  refreshQuote: function(callback) {
     let here = this;
-    let a = this._getQuote(this.quoteUrl, function(data){
-      if(data){
+    this._getQuote(this.quoteUrl, function(data) {
+      if(data) {
         this.Quote.parsed = JSON.parse(data);
-        this.Quote.quote = this.getNestedValue(this.Quote.parsed, this.quoteProp);
-        this.Quote.author = this.getNestedValue(this.Quote.parsed, this.authorProp, '');
+        this.Quote.quote = this.getNestedValue(this.Quote.parsed,
+          this.quoteProp);
+        this.Quote.author = this.getNestedValue(this.Quote.parsed,
+          this.authorProp, '');
         callback.call(here);
       }
     });
-  }
-}
+  },
+};
 
-function qDriverForismatic(){
+function DriverForismatic() {
   this._init();
 }
 
-qDriverForismatic.prototype = {
-  __proto__: qDriver.prototype,
+DriverForismatic.prototype = {
+  __proto__: Driver.prototype,
 
   driverName: 'Forismatic',
   driverURL: 'http://forismatic.com',
@@ -76,17 +83,17 @@ qDriverForismatic.prototype = {
   quoteProp: 'quoteText',
   authorProp: 'quoteAuthor',
 
-  _init: function(){
-    qDriver.prototype._init.call(this);
+  _init: function() {
+    Driver.prototype._init.call(this);
   },
-}
+};
 
-function qDriverQOnDesigns(){
+function DriverQOnDesigns() {
   this._init();
 }
 
-qDriverQOnDesigns.prototype = {
-  __proto__: qDriver.prototype,
+DriverQOnDesigns.prototype = {
+  __proto__: Driver.prototype,
 
   driverName: 'QuotesOnDesign',
   driverURL: 'http://quotesondesign.com',
@@ -95,17 +102,17 @@ qDriverQOnDesigns.prototype = {
   quoteProp: 'quote',
   authorProp: 'author',
 
-  _init: function(){
-    qDriver.prototype._init.call(this);
+  _init: function() {
+    Driver.prototype._init.call(this);
   },
-}
+};
 
-function qDriverChuckNorris(){
+function DriverChuckNorris() {
   this._init();
 }
 
-qDriverChuckNorris.prototype = {
-  __proto__: qDriver.prototype,
+DriverChuckNorris.prototype = {
+  __proto__: Driver.prototype,
 
   driverName: 'ChuckNorrisJokes',
   driverURL: '',
@@ -113,18 +120,18 @@ qDriverChuckNorris.prototype = {
   quoteUrl: 'http://api.icndb.com/jokes/random',
   quoteProp: 'value.joke',
 
-  _init: function(){
-    qDriver.prototype._init.call(this);
+  _init: function() {
+    Driver.prototype._init.call(this);
   },
-}
+};
 
 
-function qDriverStormConsul(){
+function DriverStormConsul() {
   this._init();
 }
 
-qDriverStormConsul.prototype = {
-  __proto__: qDriver.prototype,
+DriverStormConsul.prototype = {
+  __proto__: Driver.prototype,
 
   driverName: 'StormConsultancy',
   driverURL: '',
@@ -133,27 +140,26 @@ qDriverStormConsul.prototype = {
   quoteProp: 'quote',
   authorProp: 'author',
 
-  _init: function(){
-    qDriver.prototype._init.call(this);
-  }
+  _init: function() {
+    Driver.prototype._init.call(this);
+  },
+};
 
-}
-
-/*/////////////////////////////////
-/// Creating a new Quote Driver ///
-///////////////////////////////////
+/* ///////////////////////////////////
+   /// Creating a new Quote Driver ///
+   ///////////////////////////////////
 
 Use the folling base model to define everything needed
 
 1. Add new option in settings-schema.json under "service"
 2. Add new case   in main.js _initDriver
 
-function qDriverBASEMODEL(){
+function DriverBASEMODEL() {
   this._init();
 }
 
-qDriverBASEMODEL.prototype = {
-  __proto__: qDriver.prototype,
+DriverBASEMODEL.prototype = {
+  __proto__: Driver.prototype,
 
   driverName: 'DIVERNAME',
   driverURL: 'DRIVER WEBSITE',
@@ -162,8 +168,8 @@ qDriverBASEMODEL.prototype = {
   quoteProp: 'field for quote',
   authorProp: 'field for author',
 
-  _init: function(){
-    qDriver.prototype._init.call(this);
-  }
-}
+  _init: function() {
+    Driver.prototype._init.call(this);
+  },
+};
 */
