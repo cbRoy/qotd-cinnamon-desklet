@@ -133,6 +133,6 @@ QotDDesklet.prototype = {
 
  _update_display: function(){
     //this.driver.showType(); //debug
-    this.quote.set_text(this.driver.data.quote + '\n' + this.driver.data.author);
+    this.quote.set_text(this.driver.Quote.quote + '\n' + this.driver.Quote.author);
  },
 }
