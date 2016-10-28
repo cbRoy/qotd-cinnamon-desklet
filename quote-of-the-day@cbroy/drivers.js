@@ -26,15 +26,11 @@ Driver.prototype = {
     this.Quote.author = '';
   },
 
-  getNestedValue: function(o, p, defval) {
-      if (typeof defval == 'undefined') defval = null;
-      p = p.split('.');
-      for (let i = 0; i < p.length; i++) {
-          if(typeof o[p[i]] == 'undefined')
-              return defval;
-          o = o[p[i]];
-      }
-      return o;
+  getNestedValue: function(object, properties) {
+      properties.split('.').forEach(function(cv, i, a) {
+        object = object[a[i]];
+      });
+      return object || ''; // returns '' if object = undefined
   },
 
   _getQuote: function(url, callback) {
