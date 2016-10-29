@@ -133,8 +133,10 @@ QotDDesklet.prototype = {
 
   _update: function() {
     let here = this;
-    this.driver.refreshQuote(function() {
-      here._update_display();
+    this.driver.refreshQuote(function(data) {
+      if(data)
+        here._update_display();
+      _update();
     });
  },
 
