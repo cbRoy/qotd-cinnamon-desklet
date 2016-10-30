@@ -11,7 +11,6 @@ function Driver() {
 }
 
 Driver.prototype = {
-  MAX_LENGTH: 120,
   driverName: '',
   driverURL: '',
   driverText: '',
@@ -60,11 +59,7 @@ Driver.prototype = {
           this.quoteProp);
         this.Quote.author = this.getNestedValue(this.Quote.parsed,
           this.authorProp, '');
-          if(this.Quote.quote.length < 120) {
-            callback.call(false, 1);
-          }else {
-            callback.call(true, here);
-          }
+        callback.call(here);
       }
     });
   },
